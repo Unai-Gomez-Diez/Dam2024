@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import edu.unaigomdie.dan2024.R
 import edu.unaigomdie.dan2024.features.movies.data.MovieDataRepository
+import edu.unaigomdie.dan2024.features.movies.data.local.MovieXmlLocalDataSource
 import edu.unaigomdie.dan2024.features.movies.data.remote.MovieMockRemoteDataSource
 import edu.unaigomdie.dan2024.features.movies.domain.GetMoviesUseCase
 import edu.unaigomdie.dan2024.features.movies.domain.Movie
@@ -22,10 +23,22 @@ class MovieActivity : AppCompatActivity() {
         val movies = viewModel.viewCreated()
         bindData(movies)
         val movie = viewModel.itemSelected(movies.first().id)
+        testXml()
         movie?.let {
-            Log.d("@dev", movie.toString())
+            // Log.d("@dev", movie.toString())
         }
 
+
+    }
+
+    private fun testXml() {
+        val xmlDataSource = MovieXmlLocalDataSource(this)
+        val movie = viewModel.itemSelected("1")
+        movie?.let {
+            xmlDataSource.save(movie)
+        }
+        val movieSaved = xmlDataSource.findMovie()
+        Log.d("@dev", movieSaved.toString())
     }
 
     private fun bindData(movies: List<Movie>) {
